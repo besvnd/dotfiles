@@ -97,3 +97,6 @@ end)
 
 local treesitter = require("treesitter.treesitter_setup")
 treesitter.setup()
+
+-- colorscheme
+vim.cmd([[colorscheme tokyonight]])
