@@ -6,7 +6,7 @@ theme=Catppuccin Macchiato
 
 # aesthetics
 background-opacity = 0.85
-background-blur=16
+background-blur=11
 background=#000000
 macos-titlebar-style = hidden
 
