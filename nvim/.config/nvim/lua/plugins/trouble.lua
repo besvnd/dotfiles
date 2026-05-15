@@ -1,12 +1,6 @@
 return {
 	"folke/trouble.nvim",
 	opts = {},
-	config = function(_, opts)
-		require("trouble").setup(opts)
-		-- These lines force Trouble to use your main background color
-		vim.api.nvim_set_hl(0, "TroubleNormal", { link = "Normal" })
-		vim.api.nvim_set_hl(0, "TroubleNormalNC", { link = "Normal" })
-	end,
 	cmd = "Trouble",
 	keys = {
 		{
