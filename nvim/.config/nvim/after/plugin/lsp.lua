@@ -98,42 +98,53 @@ local workspace_dir = vim.fn.stdpath("data")
 	.. "jdtls-workspace"
 	.. package.config:sub(1, 1)
 	.. project_name
+
+local function get_jdtls_bundles()
+	local bundles = {}
+	local mason_path = vim.fn.stdpath("data") .. "/mason/packages"
+
+	local debug_jar =
+		vim.fn.glob(mason_path .. "/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar")
+	if debug_jar ~= "" then
+		table.insert(bundles, debug_jar)
+	end
+
+	local test_jars = vim.fn.glob(mason_path .. "/java-test/extension/server/*.jar", false, true)
+	for _, jar in ipairs(test_jars) do
+		table.insert(bundles, jar)
+	end
+
+	return bundles
+end
+
 vim.lsp.config("jdtls", {
 	name = "jdtls",
-
-	-- `cmd` defines the executable to launch eclipse.jdt.ls.
-	-- `jdtls` must be available in $PATH and you must have Python3.9 for this to work.
-	--
-	-- As alternative you could also avoid the `jdtls` wrapper and launch
-	-- eclipse.jdt.ls via the `java` executable
-	-- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
 	cmd = {
 		"jdtls",
 		"-data",
 		workspace_dir,
 	},
-
-	-- `root_dir` must point to the root of your project.
-	-- See `:help vim.fs.root`
 	root_dir = vim.fs.root(0, { "gradlew", ".git", "mvnw" }),
-
-	-- Here you can configure eclipse.jdt.ls specific settings
-	-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
-	-- for a list of options
 	settings = {
 		java = {},
 	},
-
-	-- This sets the `initializationOptions` sent to the language server
-	-- If you plan on using additional eclipse.jdt.ls plugins like java-debug
-	-- you'll need to set the `bundles`
-	--
-	-- See https://codeberg.org/mfussenegger/nvim-jdtls#java-debug-installation
-	--
-	-- If you don't plan on any eclipse.jdt.ls plugins you can remove this
 	init_options = {
-		bundles = {},
+		bundles = get_jdtls_bundles(),
 	},
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(event)
+		local client = vim.lsp.get_client_by_id(event.data.client_id)
+		if not client or client.name ~= "jdtls" then
+			return
+		end
+		-- jdtls needs to be fully initialized before setting up DAP
+		vim.defer_fn(function()
+			require("jdtls").setup_dap({ hotcodereplace = "auto" })
+			require("jdtls.dap").setup_dap_main_class_configs()
+		end, 2000)
+	end,
 })
 
 vim.lsp.config("roslyn_ls", {
