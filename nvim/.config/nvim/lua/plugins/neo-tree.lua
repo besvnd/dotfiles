@@ -199,13 +199,107 @@ return {
 				end
 			end
 
+			local function find_test_counterpart(path, old_name, new_name)
+				local suffixes = { "Test", "Tests", "IT" }
+				local project_root = vim.fs.root(0, { "gradlew", ".git", "mvnw", "pom.xml" }) or vim.fn.getcwd()
+
+				local is_main = path:find("src/main/java/") ~= nil
+				local is_test = path:find("src/test/java/") ~= nil
+
+				if is_main then
+					local rel = path:gsub(".*src/main/java/", "")
+					local dir = vim.fn.fnamemodify(rel, ":h")
+					for _, suffix in ipairs(suffixes) do
+						local test_path = project_root
+							.. "/src/test/java/"
+							.. dir
+							.. "/"
+							.. old_name
+							.. suffix
+							.. ".java"
+						if vim.uv.fs_stat(test_path) then
+							local new_test_path = project_root
+								.. "/src/test/java/"
+								.. dir
+								.. "/"
+								.. new_name
+								.. suffix
+								.. ".java"
+							return test_path, new_test_path
+						end
+					end
+				elseif is_test then
+					for _, suffix in ipairs(suffixes) do
+						if old_name:sub(-#suffix) == suffix then
+							local base_old = old_name:sub(1, -#suffix - 1)
+							local base_new = new_name:sub(1, -#suffix - 1)
+							if base_new == "" then
+								break
+							end
+							local rel = path:gsub(".*src/test/java/", "")
+							local dir = vim.fn.fnamemodify(rel, ":h")
+							local main_path = project_root
+								.. "/src/main/java/"
+								.. dir
+								.. "/"
+								.. base_old
+								.. ".java"
+							if vim.uv.fs_stat(main_path) then
+								local new_main_path = project_root
+									.. "/src/main/java/"
+									.. dir
+									.. "/"
+									.. base_new
+									.. ".java"
+								return main_path, new_main_path
+							end
+							break
+						end
+					end
+				end
+				return nil, nil
+			end
+
+			local function rename_counterpart(old_path, new_path, old_name, new_name)
+				local counter_old, counter_new = find_test_counterpart(new_path, old_name, new_name)
+				if not counter_old or not counter_new then
+					return
+				end
+
+				local ok, err = os.rename(counter_old, counter_new)
+				if not ok then
+					vim.notify("Failed to rename counterpart: " .. (err or ""), vim.log.levels.WARN)
+					return
+				end
+
+				for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+					if vim.api.nvim_buf_get_name(buf) == counter_old then
+						vim.api.nvim_buf_set_name(buf, counter_new)
+						vim.api.nvim_buf_call(buf, function()
+							vim.cmd.edit({ bang = true })
+						end)
+					end
+				end
+
+				move_java_class(counter_old, counter_new)
+				rename_java_class(counter_old, counter_new)
+
+				local counter_file = vim.fn.fnamemodify(counter_new, ":t")
+				vim.notify("Also renamed: " .. counter_file, vim.log.levels.INFO)
+			end
+
 			local function on_file_rename(args)
 				local old = args.source
 				local new = args.destination
 
 				if old:match("%.java$") and new:match("%.java$") then
+					local old_name = vim.fn.fnamemodify(old, ":t:r")
+					local new_name = vim.fn.fnamemodify(new, ":t:r")
 					move_java_class(old, new)
 					rename_java_class(old, new)
+					if old_name ~= new_name then
+						rename_counterpart(old, new, old_name, new_name)
+					end
 				else
 					lsp_will_rename(old, new)
 				end
