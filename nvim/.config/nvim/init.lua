@@ -32,10 +32,11 @@ vim.o.smartindent = true
 vim.o.signcolumn = "yes"
 vim.o.foldenable = false
 vim.o.autoread = true
+vim.wo.number = true
 vim.wo.relativenumber = true
 
 local treesitter = require("treesitter.treesitter_setup")
 treesitter.setup()
 
 -- colorscheme
-vim.cmd([[colorscheme tokyonight]])
+vim.cmd([[colorscheme catppuccin]])
