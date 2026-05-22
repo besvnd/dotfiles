@@ -16,7 +16,6 @@ return {
 				"--line-number",
 				"--column",
 				"--smart-case",
-				"--no-ignore",
 				"--fixed-strings",
 			},
 		},
