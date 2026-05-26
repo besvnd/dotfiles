@@ -92,60 +92,6 @@ vim.lsp.config("lua_ls", {
 	},
 })
 
-local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
-local workspace_dir = vim.fn.stdpath("data")
-	.. package.config:sub(1, 1)
-	.. "jdtls-workspace"
-	.. package.config:sub(1, 1)
-	.. project_name
-
-local function get_jdtls_bundles()
-	local bundles = {}
-	local mason_path = vim.fn.stdpath("data") .. "/mason/packages"
-
-	local debug_jar =
-		vim.fn.glob(mason_path .. "/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar")
-	if debug_jar ~= "" then
-		table.insert(bundles, debug_jar)
-	end
-
-	local test_jars = vim.fn.glob(mason_path .. "/java-test/extension/server/*.jar", false, true)
-	for _, jar in ipairs(test_jars) do
-		table.insert(bundles, jar)
-	end
-
-	return bundles
-end
-
-vim.lsp.config("jdtls", {
-	name = "jdtls",
-	cmd = {
-		"jdtls",
-		"-data",
-		workspace_dir,
-	},
-	root_dir = vim.fs.root(0, { "gradlew", ".git", "mvnw" }),
-	settings = {
-		java = {},
-	},
-	init_options = {
-		bundles = get_jdtls_bundles(),
-	},
-})
-
-vim.api.nvim_create_autocmd("LspAttach", {
-	callback = function(event)
-		local client = vim.lsp.get_client_by_id(event.data.client_id)
-		if not client or client.name ~= "jdtls" then
-			return
-		end
-		-- jdtls needs to be fully initialized before setting up DAP
-		vim.defer_fn(function()
-			require("jdtls").setup_dap({ hotcodereplace = "auto" })
-			require("jdtls.dap").setup_dap_main_class_configs()
-		end, 2000)
-	end,
-})
 
 vim.lsp.config("roslyn_ls", {
 	cmd = {
