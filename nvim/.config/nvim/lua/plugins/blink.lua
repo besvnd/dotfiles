@@ -8,7 +8,8 @@ return {
 			["<C-k>"] = { "select_prev", "fallback" },
 			["<C-j>"] = { "select_next", "fallback" },
 			["<C-e>"] = { "hide", "fallback" },
-			["<Tab>"] = { "accept", "fallback" },
+			["<Tab>"] = { "accept", "snippet_forward", "fallback" },
+			["<S-Tab>"] = { "snippet_backward", "fallback" },
 		},
 
 		appearance = {
