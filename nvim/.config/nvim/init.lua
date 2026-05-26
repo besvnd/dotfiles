@@ -39,4 +39,4 @@ local treesitter = require("treesitter.treesitter_setup")
 treesitter.setup()
 
 -- colorscheme
-vim.cmd([[colorscheme catppuccin]])
+vim.cmd([[colorscheme catppuccin-macchiato]])
