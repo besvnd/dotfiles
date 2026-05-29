@@ -11,16 +11,19 @@ vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
   { src = "https://github.com/vague2k/vague.nvim" },
   { src = "https://github.com/stevearc/oil.nvim" },
-  { src = "https://github.com/nvim-mini/mini.pick" },
   { src = "https://github.com/saghen/blink.lib" },
   {	src = "https://github.com/saghen/blink.cmp", version = 'v1' , },
   { src = "https://github.com/kdheepak/lazygit.nvim" },
+  { src = "https://github.com/nvim-lua/plenary.nvim" },
+  { src = "https://github.com/nvim-telescope/telescope.nvim" },
+  { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim" },
+  { src = "https://github.com/nvim-tree/nvim-web-devicons" },
+  { src = "https://github.com/nvim-lualine/lualine.nvim" },
 }) 
 
 -- keymaps
 vim.keymap.set('n', '<leader>o', ':update<CR> :source<CR>')
 vim.keymap.set('n', '<leader>w', ':write<CR>')
-vim.keymap.set('n', '<leader>f', ':Pick files<CR>')
 vim.keymap.set("n", "<leader>gg", '<cmd>LazyGit<CR>')
 vim.keymap.set("n", '<leader>e', function()
   if vim.bo.filetype == 'oil' then
@@ -29,9 +32,38 @@ vim.keymap.set("n", '<leader>e', function()
     vim.cmd('Oil')
   end
 end)
+local builtin = require("telescope.builtin")
+vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find files" })
+vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Live grep" })
+vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Buffers" })
+vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Help tags" })
+vim.keymap.set('n', '<leader>xx', function()
+  vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
+end)
+vim.keymap.set("n", "=", vim.lsp.buf.format)
 
-require "mini.pick".setup()
+
+-- telescope setup
+local telescope = require("telescope")
+telescope.setup({
+  extensions = {
+    fzf = {
+      fuzzy = true,
+      override_generic_sorter = true,
+      override_file_sorter = true,
+      case_mode = "smart_case",
+    },
+  },
+})
+pcall(telescope.load_extension, "fzf")
+
+-- lualine setup
+require "lualine".setup()
+
+-- oil setup
 require "oil".setup()
+
+-- lsp setup
 vim.lsp.enable("jdtls")
 
 -- autocomplete
@@ -57,5 +89,6 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 	end,
 })
 
+-- themes etc 
 vim.cmd("colorscheme vague")
 vim.cmd(":hi statusline guibg=NONE")
