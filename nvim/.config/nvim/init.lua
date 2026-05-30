@@ -9,7 +9,7 @@ vim.o.winborder = "rounded"
 -- plugins
 vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
-  { src = "https://github.com/vague2k/vague.nvim" },
+  { src = "https://github.com/scottmckendry/cyberdream.nvim" },
   { src = "https://github.com/stevearc/oil.nvim" },
   { src = "https://github.com/saghen/blink.lib" },
   {	src = "https://github.com/saghen/blink.cmp", version = 'v1' , },
@@ -90,5 +90,5 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 })
 
 -- themes etc 
-vim.cmd("colorscheme vague")
+vim.cmd("colorscheme cyberdream")
 vim.cmd(":hi statusline guibg=NONE")
