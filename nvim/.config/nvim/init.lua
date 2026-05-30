@@ -41,6 +41,10 @@ vim.keymap.set('n', '<leader>xx', function()
   vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
 end)
 vim.keymap.set("n", "=", vim.lsp.buf.format)
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
 
 
 -- telescope setup
