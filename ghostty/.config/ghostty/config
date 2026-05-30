@@ -1,13 +1,16 @@
-theme=Catppuccin Macchiato
+#theme=Catppuccin Macchiato
 # tmux integration - send save-buffer command
 #keybind = cmd+s=text:\x01\x73
 # tmux prefix to toggle zoom on current pane
 #keybind = cmd+b=text:\x01\x7a
 
 # aesthetics
-background-opacity = 0.85
-background-blur=11
-background=#000000
+#background-image=~/Pictures/wallhaven-3q5pw6.jpg
+#background-image-fit=cover
+#background-image-opacity=0.2
+#background-opacity=1
+#background-blur=11
+#background=#000000
 macos-titlebar-style = hidden
 macos-option-as-alt = false
 
@@ -16,3 +19,27 @@ font-size=16
 font-thicken=true
 font-thicken-strength=1
 adjust-cell-height=1
+
+# cyberdream theme for ghostty (https://github.com/scottmckendry/cyberdream.nvim/tree/main/extras/ghostty)
+palette = 0=#16181a
+palette = 1=#ff6e5e
+palette = 2=#5eff6c
+palette = 3=#f1ff5e
+palette = 4=#5ea1ff
+palette = 5=#bd5eff
+palette = 6=#5ef1ff
+palette = 7=#ffffff
+palette = 8=#3c4048
+palette = 9=#ff6e5e
+palette = 10=#5eff6c
+palette = 11=#f1ff5e
+palette = 12=#5ea1ff
+palette = 13=#bd5eff
+palette = 14=#5ef1ff
+palette = 15=#ffffff
+
+background = #16181a
+foreground = #ffffff
+cursor-color = #ffffff
+selection-background = #3c4048
+selection-foreground = #ffffff

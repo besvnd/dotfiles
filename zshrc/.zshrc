@@ -6,3 +6,5 @@ alias kubectl="kubecolor"
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 eval "$(starship init zsh)"
 
+export KUBE_EDITOR="nvim"
+export XDG_CONFIG_HOME="$HOME/.config"
