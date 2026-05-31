@@ -19,6 +19,7 @@ vim.pack.add({
   { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim" },
   { src = "https://github.com/nvim-tree/nvim-web-devicons" },
   { src = "https://github.com/nvim-lualine/lualine.nvim" },
+  { src = "https://github.com/GooseRooster/cairn.nvim" },
 }) 
 
 -- keymaps
@@ -92,6 +93,10 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 		})
 	end,
 })
+
+-- cairn setup
+require "cairn".setup()
+
 
 -- themes etc 
 vim.cmd("colorscheme cyberdream")
