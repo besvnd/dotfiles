@@ -3,6 +3,7 @@ vim.o.relativenumber = true
 vim.o.wrap = false
 vim.o.tabstop = 4
 vim.o.swapfile = false
+vim.o.clipboard = "unnamedplus"
 vim.g.mapleader = " "
 vim.o.winborder = "rounded"
 
@@ -48,6 +49,14 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
+-- send deletes/changes to the black hole register so they don't clobber the clipboard
+for _, key in ipairs({ "d", "D", "c", "C", "x", "X", "s", "S" }) do
+  vim.keymap.set({ "n", "v" }, key, '"_' .. key)
+end
+-- keep a real cut available via <leader>d / <leader>D
+vim.keymap.set({ "n", "v" }, "<leader>d", "d")
+vim.keymap.set({ "n", "v" }, "<leader>D", "D")
+
 
 -- telescope setup
 local telescope = require("telescope")
@@ -67,8 +76,11 @@ pcall(telescope.load_extension, "fzf")
 require "lualine".setup()
 
 -- oil setup
-require "oil".setup()
-
+require("oil").setup({
+  view_options = {
+    show_hidden = true,
+  },
+})
 -- lsp setup
 vim.lsp.enable("jdtls")
 
