@@ -43,20 +43,38 @@ vim.keymap.set('n', '<leader>xx', function()
 end)
 vim.keymap.set("n", "=", vim.lsp.buf.format)
 
+local function palantir_format()
+  local view = vim.fn.winsaveview()
+  local input = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+  local output = vim.fn.systemlist({ "palantir-java-format", "--palantir", "-" }, input)
+  if vim.v.shell_error ~= 0 then
+    vim.notify(table.concat(output, "\n"), vim.log.levels.ERROR)
+    return
+  end
+  vim.api.nvim_buf_set_lines(0, 0, -1, false, output)
+  vim.fn.winrestview(view)
+end
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "java",
   callback = function(args)
-    vim.keymap.set("n", "=", function()
-      local view = vim.fn.winsaveview()
-      local input = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
-      local output = vim.fn.systemlist({ "palantir-java-format", "--palantir", "-" }, input)
-      if vim.v.shell_error ~= 0 then
-        vim.notify(table.concat(output, "\n"), vim.log.levels.ERROR)
-        return
-      end
-      vim.api.nvim_buf_set_lines(0, 0, -1, false, output)
-      vim.fn.winrestview(view)
-    end, { buffer = args.buf, desc = "Palantir Java format" })
+    vim.keymap.set("n", "=", palantir_format, { buffer = args.buf, desc = "Palantir Java format" })
+  end,
+})
+
+local format_group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true })
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = format_group,
+  pattern = "*.java",
+  callback = palantir_format,
+})
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = format_group,
+  callback = function(args)
+    if vim.bo[args.buf].filetype == "java" then return end
+    if not vim.tbl_isempty(vim.lsp.get_clients({ bufnr = args.buf })) then
+      vim.lsp.buf.format({ bufnr = args.buf, async = false })
+    end
   end,
 })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
