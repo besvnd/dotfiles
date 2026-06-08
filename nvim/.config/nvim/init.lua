@@ -11,18 +11,14 @@ vim.o.winborder = "rounded"
 vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
   { src = "https://github.com/scottmckendry/cyberdream.nvim" },
-  { src = "https://github.com/stevearc/oil.nvim" },
   { src = "https://github.com/saghen/blink.lib" },
   {	src = "https://github.com/saghen/blink.cmp", version = 'v1' , },
   { src = "https://github.com/kdheepak/lazygit.nvim" },
-  { src = "https://github.com/nvim-lua/plenary.nvim" },
-  { src = "https://github.com/nvim-telescope/telescope.nvim" },
-  { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim" },
-  { src = "https://github.com/nvim-tree/nvim-web-devicons" },
-  { src = "https://github.com/nvim-lualine/lualine.nvim" },
   { src = "https://github.com/GooseRooster/cairn.nvim" },
   { src = "https://github.com/romus204/tree-sitter-manager.nvim" },
-  { src = "https://github.com/folke/flash.nvim" }
+  { src = "https://github.com/folke/flash.nvim" },
+  { src = "https://github.com/nvim-mini/mini.nvim" },
+  { src = "https://github.com/sphamba/smear-cursor.nvim" },
 }) 
 
 -- keymaps
@@ -30,17 +26,18 @@ vim.keymap.set('n', '<leader>o', ':update<CR> :source<CR>')
 vim.keymap.set('n', '<leader>w', ':write<CR>')
 vim.keymap.set("n", "<leader>gg", '<cmd>LazyGit<CR>')
 vim.keymap.set("n", '<leader>e', function()
-  if vim.bo.filetype == 'oil' then
-    require("oil.actions").close.callback()
-  else
-    vim.cmd('Oil')
-  end
-end)
-local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find files" })
-vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Live grep" })
-vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Buffers" })
-vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Help tags" })
+  MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+end, { desc = "Open file explorer" })
+vim.keymap.set("n", "<leader>ff", function() MiniPick.builtin.files() end, { desc = "Find files" })
+vim.keymap.set("n", "<leader>fg", function() MiniPick.builtin.grep_live() end, { desc = "Live grep" })
+vim.keymap.set("n", "<leader>fb", function() MiniPick.builtin.buffers() end, { desc = "Buffers" })
+vim.keymap.set("n", "<leader>fh", function() MiniPick.builtin.help() end, { desc = "Help tags" })
+vim.keymap.set("n", "<leader>fd", function()
+  MiniExtra.pickers.diagnostic({ scope = "current" })
+end, { desc = "Diagnostics (buffer)" })
+vim.keymap.set("n", "<leader>fD", function()
+  MiniExtra.pickers.diagnostic()
+end, { desc = "Diagnostics (workspace)" })
 vim.keymap.set('n', '<leader>xx', function()
   vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
 end)
@@ -59,29 +56,6 @@ vim.keymap.set({ "n", "v" }, "<leader>d", "d")
 vim.keymap.set({ "n", "v" }, "<leader>D", "D")
 
 
--- telescope setup
-local telescope = require("telescope")
-telescope.setup({
-  extensions = {
-    fzf = {
-      fuzzy = true,
-      override_generic_sorter = true,
-      override_file_sorter = true,
-      case_mode = "smart_case",
-    },
-  },
-})
-pcall(telescope.load_extension, "fzf")
-
--- lualine setup
-require "lualine".setup()
-
--- oil setup
-require("oil").setup({
-  view_options = {
-    show_hidden = true,
-  },
-})
 -- lsp setup
 vim.lsp.enable("jdtls")
 
@@ -98,7 +72,6 @@ require("tree-sitter-manager").setup({
   -- languages = {}, -- override or add new parser sources
 })
 
-
 -- flash setup
 require("flash").setup()
 vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { desc = "Flash" })
@@ -106,6 +79,27 @@ vim.keymap.set({ "n", "x", "o" }, "S", function() require("flash").treesitter() 
 vim.keymap.set("o", "r", function() require("flash").remote() end, { desc = "Remote Flash" })
 vim.keymap.set({ "o", "x" }, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
 vim.keymap.set("c", "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
+
+-- mini setup
+require('mini.pairs').setup()
+require('mini.icons').setup()
+MiniIcons.mock_nvim_web_devicons()
+require('mini.pick').setup()
+require('mini.extra').setup()
+require('mini.files').setup({
+  windows = {
+    preview = true,
+    width_focus = 40,
+    width_nofocus = 20,
+    width_preview = 60,
+    max_number = 2,
+  },
+  options = { use_as_default_explorer = true },
+})
+require('mini.statusline').setup()
+
+-- smear-cursor setup
+require('smear_cursor').setup()
 
 -- autocomplete
 vim.api.nvim_create_autocmd("InsertEnter", {
