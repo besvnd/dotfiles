@@ -42,6 +42,23 @@ vim.keymap.set('n', '<leader>xx', function()
   vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
 end)
 vim.keymap.set("n", "=", vim.lsp.buf.format)
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "java",
+  callback = function(args)
+    vim.keymap.set("n", "=", function()
+      local view = vim.fn.winsaveview()
+      local input = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+      local output = vim.fn.systemlist({ "palantir-java-format", "--palantir", "-" }, input)
+      if vim.v.shell_error ~= 0 then
+        vim.notify(table.concat(output, "\n"), vim.log.levels.ERROR)
+        return
+      end
+      vim.api.nvim_buf_set_lines(0, 0, -1, false, output)
+      vim.fn.winrestview(view)
+    end, { buffer = args.buf, desc = "Palantir Java format" })
+  end,
+})
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
