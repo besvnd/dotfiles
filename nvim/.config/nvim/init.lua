@@ -18,6 +18,7 @@ vim.pack.add({
   { src = "https://github.com/romus204/tree-sitter-manager.nvim" },
   { src = "https://github.com/nvim-mini/mini.nvim" },
   { src = "https://github.com/sphamba/smear-cursor.nvim" },
+  { src = "https://github.com/akinsho/toggleterm.nvim" },
 }) 
 
 -- keymaps
@@ -127,6 +128,13 @@ require('mini.statusline').setup()
 
 -- smear-cursor setup
 require('smear_cursor').setup()
+
+-- toggleterm setup
+require('toggleterm').setup({
+  open_mapping = [[<C-\>]],
+  direction = 'float',
+  float_opts = { border = 'rounded' },
+})
 
 -- autocomplete
 vim.api.nvim_create_autocmd("InsertEnter", {
