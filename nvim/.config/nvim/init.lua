@@ -16,7 +16,6 @@ vim.pack.add({
   { src = "https://github.com/kdheepak/lazygit.nvim" },
   { src = "https://github.com/GooseRooster/cairn.nvim" },
   { src = "https://github.com/romus204/tree-sitter-manager.nvim" },
-  { src = "https://github.com/folke/flash.nvim" },
   { src = "https://github.com/nvim-mini/mini.nvim" },
   { src = "https://github.com/sphamba/smear-cursor.nvim" },
 }) 
@@ -83,7 +82,7 @@ vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
 -- send deletes/changes to the black hole register so they don't clobber the clipboard
-for _, key in ipairs({ "d", "D", "c", "C", "x", "X", "s", "S" }) do
+for _, key in ipairs({ "d", "D", "c", "C", "x", "X" }) do
   vim.keymap.set({ "n", "v" }, key, '"_' .. key)
 end
 -- keep a real cut available via <leader>d / <leader>D
@@ -107,16 +106,9 @@ require("tree-sitter-manager").setup({
   -- languages = {}, -- override or add new parser sources
 })
 
--- flash setup
-require("flash").setup()
-vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { desc = "Flash" })
-vim.keymap.set({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
-vim.keymap.set("o", "r", function() require("flash").remote() end, { desc = "Remote Flash" })
-vim.keymap.set({ "o", "x" }, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
-vim.keymap.set("c", "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
-
 -- mini setup
 require('mini.pairs').setup()
+require('mini.surround').setup()
 require('mini.icons').setup()
 MiniIcons.mock_nvim_web_devicons()
 require('mini.pick').setup()
