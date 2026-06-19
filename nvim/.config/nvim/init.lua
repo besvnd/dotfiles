@@ -4,6 +4,8 @@ vim.o.wrap = false
 vim.o.tabstop = 4
 vim.o.swapfile = false
 vim.o.clipboard = "unnamedplus"
+vim.o.ignorecase = true
+vim.o.smartcase = true
 vim.g.mapleader = " "
 vim.o.winborder = "rounded"
 
