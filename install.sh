@@ -7,6 +7,7 @@ stow -t ~ tmux
 stow -t ~ starship
 stow -t ~ zshrc
 stow -t ~ lazygit
+stow -t ~ yazi 
 
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
