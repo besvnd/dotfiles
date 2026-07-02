@@ -8,3 +8,14 @@ eval "$(starship init zsh)"
 
 export KUBE_EDITOR="nvim"
 export XDG_CONFIG_HOME="$HOME/.config"
+ 
+set -o vi
+
+# yazi: change to cwd when exiting
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	command rm -f -- "$tmp"
+}
