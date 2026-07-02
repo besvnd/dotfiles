@@ -72,6 +72,10 @@
     "vague.nvim": {
       "rev": "fd58046b9d64259d9785e4aeb6d6f494c6943cad",
       "src": "https://github.com/vague2k/vague.nvim"
+    },
+    "yazi.nvim": {
+      "rev": "2314e0eb074996acc30183e3e9dfbfefd82f24aa",
+      "src": "https://github.com/mikavilpas/yazi.nvim"
     }
   }
 }

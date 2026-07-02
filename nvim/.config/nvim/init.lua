@@ -20,15 +20,14 @@ vim.pack.add({
   { src = "https://github.com/MunifTanjim/nui.nvim" },
   { src = "https://github.com/nvim-lua/plenary.nvim" },
   { src = "https://github.com/topaxi/pipeline.nvim" },
+  { src = "https://github.com/mikavilpas/yazi.nvim" },
 }) 
 
 -- keymaps
 vim.keymap.set('n', '<leader>o', ':update<CR> :source<CR>')
 vim.keymap.set('n', '<leader>w', ':write<CR>')
 vim.keymap.set("n", "<leader>gg", '<cmd>LazyGit<CR>')
-vim.keymap.set("n", '<leader>e', function()
-  MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
-end, { desc = "Open file explorer" })
+vim.keymap.set("n", '<leader>e', '<cmd>Yazi<cr>', { desc = "Open yazi file explorer" })
 vim.keymap.set("n", "<leader>ff", function() MiniPick.builtin.files() end, { desc = "Find files" })
 vim.keymap.set("n", "<leader>fg", function() MiniPick.builtin.grep_live() end, { desc = "Live grep" })
 vim.keymap.set("n", "<leader>fb", function() MiniPick.builtin.buffers() end, { desc = "Buffers" })
@@ -113,16 +112,6 @@ require('mini.icons').setup()
 MiniIcons.mock_nvim_web_devicons()
 require('mini.pick').setup()
 require('mini.extra').setup()
-require('mini.files').setup({
-  windows = {
-    preview = true,
-    width_focus = 40,
-    width_nofocus = 20,
-    width_preview = 60,
-    max_number = 2,
-  },
-  options = { use_as_default_explorer = true },
-})
 require('mini.statusline').setup()
 require('mini.ai').setup()
 
@@ -134,6 +123,11 @@ require('toggleterm').setup({
   open_mapping = [[<C-\>]],
   direction = 'float',
   float_opts = { border = 'rounded' },
+})
+
+-- yazi setup
+require('yazi').setup({
+  open_for_directories = true,
 })
 
 -- pipeline.nvim setup
