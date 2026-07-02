@@ -1,11 +1,7 @@
-vim.o.number = true
 vim.o.relativenumber = true
 vim.o.wrap = false
 vim.o.tabstop = 4
 vim.o.swapfile = false
-vim.o.clipboard = "unnamedplus"
-vim.o.ignorecase = true
-vim.o.smartcase = true
 vim.g.mapleader = " "
 vim.o.winborder = "rounded"
 
@@ -21,6 +17,9 @@ vim.pack.add({
   { src = "https://github.com/nvim-mini/mini.nvim" },
   { src = "https://github.com/sphamba/smear-cursor.nvim" },
   { src = "https://github.com/akinsho/toggleterm.nvim" },
+  { src = "https://github.com/MunifTanjim/nui.nvim" },
+  { src = "https://github.com/nvim-lua/plenary.nvim" },
+  { src = "https://github.com/topaxi/pipeline.nvim" },
 }) 
 
 -- keymaps
@@ -44,6 +43,8 @@ vim.keymap.set('n', '<leader>xx', function()
   vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
 end)
 vim.keymap.set("n", "=", vim.lsp.buf.format)
+vim.keymap.set("n", "L", function() vim.diagnostic.jump({ count = 1, float = true }) end, { desc = "Next diagnostic" })
+vim.keymap.set("n", "H", function() vim.diagnostic.jump({ count = -1, float = true }) end, { desc = "Prev diagnostic" })
 
 local function palantir_format()
   local view = vim.fn.winsaveview()
@@ -84,15 +85,6 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
--- send deletes/changes to the black hole register so they don't clobber the clipboard
-for _, key in ipairs({ "d", "D", "c", "C", "x", "X" }) do
-  vim.keymap.set({ "n", "v" }, key, '"_' .. key)
-end
--- keep a real cut available via <leader>d / <leader>D
-vim.keymap.set({ "n", "v" }, "<leader>d", "d")
-vim.keymap.set({ "n", "v" }, "<leader>D", "D")
-
-
 -- lsp setup
 vim.lsp.enable("jdtls")
 
@@ -110,6 +102,11 @@ require("tree-sitter-manager").setup({
 })
 
 -- mini setup
+require('mini.basics').setup({
+  options  = { extra_ui = true, win_borders = 'default' },
+  mappings = { windows = true, move_with_alt = true },
+})
+vim.o.cursorline = false
 require('mini.pairs').setup()
 require('mini.surround').setup()
 require('mini.icons').setup()
@@ -127,6 +124,7 @@ require('mini.files').setup({
   options = { use_as_default_explorer = true },
 })
 require('mini.statusline').setup()
+require('mini.ai').setup()
 
 -- smear-cursor setup
 require('smear_cursor').setup()
@@ -137,6 +135,10 @@ require('toggleterm').setup({
   direction = 'float',
   float_opts = { border = 'rounded' },
 })
+
+-- pipeline.nvim setup
+require('pipeline').setup()
+vim.keymap.set('n', '<leader>ci', '<cmd>Pipeline<cr>', { desc = 'Open pipeline.nvim' })
 
 -- autocomplete
 vim.api.nvim_create_autocmd("InsertEnter", {
