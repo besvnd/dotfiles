@@ -30,7 +30,7 @@
 // =============================================================
 
 // ---------------- tunables -----------------------------------
-const float WARP_INTERVAL = 600.0; // cruise seconds between warps (0 = never warp)
+const float WARP_INTERVAL = 3600.0; // cruise seconds between warps (0 = never warp)
 const float ENTRY_DUR     = 4.0;  // warp entry length (tails grow outward)
 const float EXIT_DUR      = 4.0;  // warp exit length (lines converge)
 // derived timeline (do not edit)
